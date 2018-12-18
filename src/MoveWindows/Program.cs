@@ -13,12 +13,12 @@ namespace MoveWindows
         [STAThread]
         public static void Main()
         {
-            new SingleInstanceHelper().KillOtherInstances();
-            var handle = User32.FindWindow("Chrome_WidgetWin_2", string.Empty);
+            var handle = User32.FindWindow(lpClassName: "Chrome_WidgetWin_2", lpWindowName: string.Empty);
             if (handle == IntPtr.Zero)
             {
                 return;
             }
+            new SingleInstanceHelper().KillOtherInstances();
             var screens = Screen.AllScreens;
             var targetPositionForScreens = new Dictionary<Screen, ScreenPositionInformation>();
             targetPositionForScreens[screens[0]] = new ScreenPositionInformation { Screen = screens[1], Position = ScreenPosition.BottomRight };
@@ -26,13 +26,16 @@ namespace MoveWindows
             while (true)
             {
                 var cursorPosition = Cursor.Position;
-                var screenWhereCursorIs = screens.Single(s => IsPointInRectangle(cursorPosition, s.Bounds));
-                var position = targetPositionForScreens[screenWhereCursorIs];
-                User32.GetWindowRect(handle, out var rectangle);
-                var width = rectangle.Right - rectangle.Left;
-                var height = rectangle.Bottom - rectangle.Top;
-                var newPosition = GetPosition(position, width, height, 20);
-                User32.MoveWindow(handle, newPosition.X, newPosition.Y, width, height, true);
+                User32.GetWindowRect(handle, out var systemRectangle);
+                var popupPosition = systemRectangle.AsDrawingRectangle();
+                var userHasMouseOverPopup = IsPointInRectangle(cursorPosition, popupPosition);
+                if (!userHasMouseOverPopup)
+                {
+                    var screenWhereCursorIs = screens.Single(s => IsPointInRectangle(cursorPosition, s.Bounds));
+                    var position = targetPositionForScreens[screenWhereCursorIs];
+                    var newPosition = GetPosition(position, popupPosition.Width, popupPosition.Height, 20);
+                    User32.MoveWindow(handle, newPosition.X, newPosition.Y, popupPosition.Width, popupPosition.Height, true);
+                }
                 Thread.Sleep(1000);
             }
         }
