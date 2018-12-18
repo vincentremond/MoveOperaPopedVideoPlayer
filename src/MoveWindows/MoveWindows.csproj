@@ -68,15 +68,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Positions\SquarePositionSetGenerator.cs" />
-    <Compile Include="Positions\BottomPositionSetGenerator.cs" />
-    <Compile Include="Positions\IPositionSetGenerator.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="NativeCalls\Rectangle.cs" />
     <Compile Include="ScreenPosition.cs" />
     <Compile Include="ScreenPositionInformation.cs" />
     <Compile Include="NativeCalls\User32.cs" />
+    <Compile Include="SingleInstanceHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
