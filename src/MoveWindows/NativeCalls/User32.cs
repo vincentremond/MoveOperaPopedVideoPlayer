@@ -6,6 +6,9 @@ namespace MoveWindows.NativeCalls
     public static class User32
     {
         [DllImport("user32.dll", SetLastError = true)]
+        public static extern IntPtr FindWindowEx(IntPtr parentHandle, IntPtr childAfter, string className, string windowTitle);
+
+        [DllImport("user32.dll", SetLastError = true)]
         internal static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
 
         [DllImport("User32.dll")]
