@@ -13,26 +13,41 @@ namespace MoveWindows
         [STAThread]
         public static void Main()
         {
-            new SingleInstanceHelper().KillOtherInstances();
+            try
+            {
+                new SingleInstanceHelper().KillOtherInstances();
+                MainProcess();
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(owner: null, text: e.ToString(), caption: "Error", buttons: MessageBoxButtons.OK, icon: MessageBoxIcon.Error);
+            }
+        }
+
+        private static void MainProcess()
+        {
             var screens = Screen.AllScreens;
             var targetPositionForScreens = new Dictionary<Screen, ScreenPositionInformation>();
             targetPositionForScreens[screens[0]] = new ScreenPositionInformation { Screen = screens[1], Position = ScreenPosition.BottomRight };
             targetPositionForScreens[screens[1]] = new ScreenPositionInformation { Screen = screens[0], Position = ScreenPosition.BottomLeft };
             while (true)
             {
-                var handle = User32.FindWindowEx(parentHandle: IntPtr.Zero, childAfter: IntPtr.Zero, className: "Chrome_WidgetWin_2", windowTitle: string.Empty);
-                if (handle != IntPtr.Zero)
+                var cursorPosition = Cursor.Position;
+                var screenWhereCursorIs = screens.FirstOrDefault(s => IsPointInRectangle(cursorPosition, s.Bounds));
+                if (screenWhereCursorIs != null)
                 {
-                    var cursorPosition = Cursor.Position;
-                    User32.GetWindowRect(handle, out var systemRectangle);
-                    var popupPosition = systemRectangle.AsDrawingRectangle();
-                    var userHasMouseOverPopup = IsPointInRectangle(cursorPosition, popupPosition);
-                    if (!userHasMouseOverPopup)
+                    var handle = User32.FindWindowEx(parentHandle: IntPtr.Zero, childAfter: IntPtr.Zero, className: "Chrome_WidgetWin_2", windowTitle: string.Empty);
+                    if (handle != IntPtr.Zero)
                     {
-                        var screenWhereCursorIs = screens.Single(s => IsPointInRectangle(cursorPosition, s.Bounds));
-                        var position = targetPositionForScreens[screenWhereCursorIs];
-                        var newPosition = GetPosition(position, popupPosition.Width, popupPosition.Height, 20);
-                        User32.MoveWindow(handle, newPosition.X, newPosition.Y, popupPosition.Width, popupPosition.Height, true);
+                        User32.GetWindowRect(handle, out var systemRectangle);
+                        var popupPosition = systemRectangle.AsDrawingRectangle();
+                        var userHasMouseOverPopup = IsPointInRectangle(cursorPosition, popupPosition);
+                        if (!userHasMouseOverPopup)
+                        {
+                            var position = targetPositionForScreens[screenWhereCursorIs];
+                            var newPosition = GetPosition(position, popupPosition.Width, popupPosition.Height, 20);
+                            User32.MoveWindow(handle, newPosition.X, newPosition.Y, popupPosition.Width, popupPosition.Height, true);
+                        }
                     }
                 }
                 Thread.Sleep(1000);
