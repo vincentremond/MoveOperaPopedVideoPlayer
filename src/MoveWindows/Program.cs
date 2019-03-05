@@ -45,7 +45,7 @@ namespace MoveWindows
                         if (!userHasMouseOverPopup)
                         {
                             var position = targetPositionForScreens[screenWhereCursorIs];
-                            var newPosition = GetPosition(position, popupPosition.Width, popupPosition.Height, 20);
+                            var newPosition = GetPosition(position, popupPosition.Width, popupPosition.Height, 8);
                             User32.MoveWindow(handle, newPosition.X, newPosition.Y, popupPosition.Width, popupPosition.Height, true);
                         }
                     }
