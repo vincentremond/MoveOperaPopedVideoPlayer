@@ -28,8 +28,8 @@ namespace MoveWindows
         {
             var screens = Screen.AllScreens;
             var targetPositionForScreens = new Dictionary<Screen, ScreenPositionInformation>();
-            targetPositionForScreens[screens[0]] = new ScreenPositionInformation { Screen = screens[1], Position = ScreenPosition.BottomRight };
-            targetPositionForScreens[screens[1]] = new ScreenPositionInformation { Screen = screens[0], Position = ScreenPosition.BottomLeft };
+            targetPositionForScreens[screens[0]] = new ScreenPositionInformation { Screen = screens[1], Position = ScreenPosition.BottomLeft };
+            targetPositionForScreens[screens[1]] = new ScreenPositionInformation { Screen = screens[0], Position = ScreenPosition.BottomRight };
             while (true)
             {
                 var cursorPosition = Cursor.Position;
