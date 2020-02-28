@@ -3,12 +3,12 @@
 namespace MoveWindows.NativeCalls
 {
     [StructLayout(LayoutKind.Sequential)]
-    public struct Rectangle
+    internal struct Rectangle
     {
-        public int Left;        // x position of upper-left corner
-        public int Top;         // y position of upper-left corner
-        public int Right;       // x position of lower-right corner
-        public int Bottom;      // y position of lower-right corner
+        public int Left; // x position of upper-left corner
+        public int Top; // y position of upper-left corner
+        public int Right; // x position of lower-right corner
+        public int Bottom; // y position of lower-right corner
 
         internal System.Drawing.Rectangle AsDrawingRectangle()
         {

@@ -1,8 +1,8 @@
 ﻿using System.Windows.Forms;
 
-namespace MoveWindows
+namespace MoveWindows.Configuration
 {
-    public class ScreenPositionInformation
+    internal class ScreenPositionInformation
     {
         public Screen Screen { get; set; }
         public ScreenPosition Position { get; set; }

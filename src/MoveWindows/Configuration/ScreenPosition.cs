@@ -1,9 +1,9 @@
 ﻿using System;
 
-namespace MoveWindows
+namespace MoveWindows.Configuration
 {
     [Flags]
-    public enum ScreenPosition
+    internal enum ScreenPosition
     {
         Top = 1,
         Right = 2,
@@ -13,6 +13,6 @@ namespace MoveWindows
         BottomLeft = Bottom | Left,
         BottomRight = Bottom | Right,
         TopLeft = Top | Left,
-        TopRight = Top | Right,
+        TopRight = Top | Right
     }
 }

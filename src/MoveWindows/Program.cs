@@ -1,14 +1,17 @@
-﻿using MoveWindows.NativeCalls;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
+using MoveWindows.Configuration;
+using MoveWindows.Helpers;
+using MoveWindows.NativeCalls;
+using Rectangle = System.Drawing.Rectangle;
 
 namespace MoveWindows
 {
-    public class Program
+    internal static class Program
     {
         [STAThread]
         public static void Main()
@@ -20,7 +23,7 @@ namespace MoveWindows
             }
             catch (Exception e)
             {
-                MessageBox.Show(owner: null, text: e.ToString(), caption: "Error", buttons: MessageBoxButtons.OK, icon: MessageBoxIcon.Error);
+                MessageBox.Show(null, e.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -28,15 +31,15 @@ namespace MoveWindows
         {
             var screens = Screen.AllScreens;
             var targetPositionForScreens = new Dictionary<Screen, ScreenPositionInformation>();
-            targetPositionForScreens[screens[0]] = new ScreenPositionInformation { Screen = screens[1], Position = ScreenPosition.BottomLeft };
-            targetPositionForScreens[screens[1]] = new ScreenPositionInformation { Screen = screens[0], Position = ScreenPosition.BottomRight };
+            targetPositionForScreens[screens[0]] = new ScreenPositionInformation {Screen = screens[1], Position = ScreenPosition.BottomLeft};
+            targetPositionForScreens[screens[1]] = new ScreenPositionInformation {Screen = screens[0], Position = ScreenPosition.BottomRight};
             while (true)
             {
                 var cursorPosition = Cursor.Position;
                 var screenWhereCursorIs = screens.FirstOrDefault(s => IsPointInRectangle(cursorPosition, s.Bounds));
                 if (screenWhereCursorIs != null)
                 {
-                    var handle = User32.FindWindowEx(parentHandle: IntPtr.Zero, childAfter: IntPtr.Zero, className: "Chrome_WidgetWin_2", windowTitle: string.Empty);
+                    var handle = User32.FindWindowEx(IntPtr.Zero, IntPtr.Zero, "Chrome_WidgetWin_2", string.Empty);
                     if (handle != IntPtr.Zero)
                     {
                         User32.GetWindowRect(handle, out var systemRectangle);
@@ -50,8 +53,11 @@ namespace MoveWindows
                         }
                     }
                 }
+
                 Thread.Sleep(1000);
             }
+
+            // ReSharper disable once FunctionNeverReturns
         }
 
         private static Point GetPosition(ScreenPositionInformation infos, int width, int height, int margin)
@@ -65,18 +71,15 @@ namespace MoveWindows
             return new Point(x, y);
         }
 
-        private static bool IsPointInRectangle(Point cursorPosition, System.Drawing.Rectangle rectangle)
+        private static bool IsPointInRectangle(Point cursorPosition, Rectangle rectangle)
         {
             return IsBetween(cursorPosition.X, rectangle.Left, rectangle.Right)
-                && IsBetween(cursorPosition.Y, rectangle.Top, rectangle.Bottom);
+                   && IsBetween(cursorPosition.Y, rectangle.Top, rectangle.Bottom);
         }
 
         private static bool IsBetween(int value, int min, int max)
         {
-            if (!(max > min))
-            {
-                throw new InvalidOperationException($"Min ({min}) should be smaller than Man ({max})");
-            }
+            if (!(max > min)) throw new InvalidOperationException($"Min ({min}) should be smaller than Man ({max})");
 
             return min <= value && value <= max;
         }
