@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Threading;
-using System.Windows.Forms;
-using MoveWindows.Configuration;
-using MoveWindows.Helpers;
-using MoveWindows.NativeCalls;
-using Rectangle = System.Drawing.Rectangle;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using MoveWindows.Contracts;
+using MoveWindows.Services;
 
 namespace MoveWindows
 {
@@ -16,72 +11,18 @@ namespace MoveWindows
         [STAThread]
         public static void Main()
         {
-            try
-            {
-                new SingleInstanceHelper().KillOtherInstances();
-                MainProcess();
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show(null, e.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            var serviceProvider = InitApp();
+            var daemon = serviceProvider.GetRequiredService<IServiceDaemon>();
+            daemon.Start();
         }
 
-        private static void MainProcess()
+        private static IServiceProvider InitApp()
         {
-            var screens = Screen.AllScreens;
-            var targetPositionForScreens = new Dictionary<Screen, ScreenPositionInformation>();
-            targetPositionForScreens[screens[0]] = new ScreenPositionInformation {Screen = screens[1], Position = ScreenPosition.BottomLeft};
-            targetPositionForScreens[screens[1]] = new ScreenPositionInformation {Screen = screens[0], Position = ScreenPosition.BottomRight};
-            while (true)
-            {
-                var cursorPosition = Cursor.Position;
-                var screenWhereCursorIs = screens.FirstOrDefault(s => IsPointInRectangle(cursorPosition, s.Bounds));
-                if (screenWhereCursorIs != null)
-                {
-                    var handle = User32.FindWindowEx(IntPtr.Zero, IntPtr.Zero, "Chrome_WidgetWin_2", string.Empty);
-                    if (handle != IntPtr.Zero)
-                    {
-                        User32.GetWindowRect(handle, out var systemRectangle);
-                        var popupPosition = systemRectangle.AsDrawingRectangle();
-                        var userHasMouseOverPopup = IsPointInRectangle(cursorPosition, popupPosition);
-                        if (!userHasMouseOverPopup)
-                        {
-                            var position = targetPositionForScreens[screenWhereCursorIs];
-                            var newPosition = GetPosition(position, popupPosition.Width, popupPosition.Height, 8);
-                            User32.MoveWindow(handle, newPosition.X, newPosition.Y, popupPosition.Width, popupPosition.Height, true);
-                        }
-                    }
-                }
-
-                Thread.Sleep(1000);
-            }
-
-            // ReSharper disable once FunctionNeverReturns
-        }
-
-        private static Point GetPosition(ScreenPositionInformation infos, int width, int height, int margin)
-        {
-            var y = infos.Position.HasFlag(ScreenPosition.Top) ? infos.Screen.WorkingArea.Y + margin
-                : infos.Position.HasFlag(ScreenPosition.Bottom) ? infos.Screen.WorkingArea.Y + infos.Screen.WorkingArea.Height - margin - height
-                : throw new InvalidOperationException("Position has no verticality");
-            var x = infos.Position.HasFlag(ScreenPosition.Left) ? infos.Screen.WorkingArea.X + margin
-                : infos.Position.HasFlag(ScreenPosition.Right) ? infos.Screen.WorkingArea.X + infos.Screen.WorkingArea.Width - margin - width
-                : throw new InvalidOperationException("Position has no horizontality");
-            return new Point(x, y);
-        }
-
-        private static bool IsPointInRectangle(Point cursorPosition, Rectangle rectangle)
-        {
-            return IsBetween(cursorPosition.X, rectangle.Left, rectangle.Right)
-                   && IsBetween(cursorPosition.Y, rectangle.Top, rectangle.Bottom);
-        }
-
-        private static bool IsBetween(int value, int min, int max)
-        {
-            if (!(max > min)) throw new InvalidOperationException($"Min ({min}) should be smaller than Man ({max})");
-
-            return min <= value && value <= max;
+            var serviceProvider = new ServiceCollection();
+            serviceProvider.AddTransient<ISingleInstanceChecker, SingleInstanceChecker>();
+            serviceProvider.AddTransient<IServiceDaemon, ServiceDaemon>();
+            serviceProvider.AddLogging(builder => builder.AddConsole(options => options.LogToStandardErrorThreshold = LogLevel.Trace));
+            return serviceProvider.BuildServiceProvider();
         }
     }
 }
