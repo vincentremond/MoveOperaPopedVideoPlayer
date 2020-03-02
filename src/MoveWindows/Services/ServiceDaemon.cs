@@ -55,15 +55,18 @@ namespace MoveWindows.Services
                 return;
             }
 
-            var (className, windowTitle) = true
-                ? ("MozillaDialogClass", "Picture-in-Picture")
-                : ("Chrome_WidgetWin_2", string.Empty)
-                ;
+            var className = GlobalConfiguration.WindowClassName;
+            var windowTitle = GlobalConfiguration.WindowTitle;
             var handle = User32.FindWindowEx(IntPtr.Zero, IntPtr.Zero, className, windowTitle);
             if (handle == IntPtr.Zero)
             {
                 _logger.LogWarning("Failed to find window handle");
                 return;
+            }
+
+            if (GlobalConfiguration.HideWindow)
+            {
+                HideWindow(handle);
             }
 
             var popupPosition = GetPipWindowPosition(handle);
@@ -77,6 +80,16 @@ namespace MoveWindows.Services
             if (IsDifferent(newPosition, popupPosition))
             {
                 User32.MoveWindow(handle, newPosition.X, newPosition.Y, popupPosition.Width, popupPosition.Height, true);
+            }
+        }
+
+        private static void HideWindow(IntPtr handle)
+        {
+            var windowLong = User32.GetWindowLong(handle, User32.GwlExStyle);
+            var targetWindowLong = (windowLong | User32.WsExToolwindow) & ~User32.WsExAppwindow;
+            if (windowLong != targetWindowLong)
+            {
+                User32.SetWindowLong(handle, User32.GwlExStyle, targetWindowLong);
             }
         }
 
