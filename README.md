@@ -13,3 +13,4 @@ dotnet publish --configuration Release --runtime win10-x64
 - [ ] Get target position from screen position with a config file
 - [x] Hide window from taskbar
 - [ ] Generate a sample config file from current screen configuration
+- [ ] Handle multiple DPI per screen to avoid multiple move and resize
