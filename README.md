@@ -14,3 +14,4 @@ dotnet publish --configuration Release --runtime win10-x64
 - [x] Hide window from taskbar
 - [ ] Generate a sample config file from current screen configuration
 - [ ] Handle multiple DPI per screen to avoid multiple move and resize
+- [ ] Replace timer with event throttler
