@@ -1,8 +1,8 @@
 ﻿using System.Diagnostics;
 using System.Linq;
-using MoveWindows.Contracts;
+using AutoMovePipWindow.Contracts;
 
-namespace MoveWindows.Services
+namespace AutoMovePipWindow.Services
 {
     internal class SingleInstanceChecker : ISingleInstanceChecker
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace MoveWindows.NativeCalls
+namespace AutoMovePipWindow.NativeCalls
 {
     internal static class User32
     {

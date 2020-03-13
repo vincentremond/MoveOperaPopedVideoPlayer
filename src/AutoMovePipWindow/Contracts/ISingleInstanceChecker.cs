@@ -1,4 +1,4 @@
-﻿namespace MoveWindows.Contracts
+﻿namespace AutoMovePipWindow.Contracts
 {
     internal interface ISingleInstanceChecker
     {

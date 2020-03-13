@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoveWindows", "MoveWindows\MoveWindows.csproj", "{F72D9D38-41BB-42FA-8AD0-5D27ED3D8A43}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoMovePipWindow", "AutoMovePipWindow\AutoMovePipWindow.csproj", "{F72D9D38-41BB-42FA-8AD0-5D27ED3D8A43}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace MoveWindows.NativeCalls
+namespace AutoMovePipWindow.NativeCalls
 {
     [StructLayout(LayoutKind.Sequential)]
     internal struct Rectangle

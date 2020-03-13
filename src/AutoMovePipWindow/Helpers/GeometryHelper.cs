@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Drawing;
-using MoveWindows.Configuration;
+using AutoMovePipWindow.Configuration;
 
-namespace MoveWindows.Helpers
+namespace AutoMovePipWindow.Helpers
 {
     internal static class GeometryHelper
     {

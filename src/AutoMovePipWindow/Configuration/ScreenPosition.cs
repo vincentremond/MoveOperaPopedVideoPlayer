@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MoveWindows.Configuration
+namespace AutoMovePipWindow.Configuration
 {
     [Flags]
     internal enum ScreenPosition

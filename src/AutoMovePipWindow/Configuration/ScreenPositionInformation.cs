@@ -1,6 +1,6 @@
 ﻿using System.Windows.Forms;
 
-namespace MoveWindows.Configuration
+namespace AutoMovePipWindow.Configuration
 {
     internal class ScreenPositionInformation
     {

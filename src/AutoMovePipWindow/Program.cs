@@ -1,10 +1,10 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using MoveWindows.Contracts;
-using MoveWindows.Services;
+using AutoMovePipWindow.Contracts;
+using AutoMovePipWindow.Services;
 
-namespace MoveWindows
+namespace AutoMovePipWindow
 {
     internal static class Program
     {

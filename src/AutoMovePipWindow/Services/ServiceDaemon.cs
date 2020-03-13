@@ -5,13 +5,13 @@ using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using Microsoft.Extensions.Logging;
-using MoveWindows.Configuration;
-using MoveWindows.Contracts;
-using MoveWindows.Helpers;
-using MoveWindows.NativeCalls;
+using AutoMovePipWindow.Configuration;
+using AutoMovePipWindow.Contracts;
+using AutoMovePipWindow.Helpers;
+using AutoMovePipWindow.NativeCalls;
 using Rectangle = System.Drawing.Rectangle;
 
-namespace MoveWindows.Services
+namespace AutoMovePipWindow.Services
 {
     internal class ServiceDaemon : IServiceDaemon
     {
