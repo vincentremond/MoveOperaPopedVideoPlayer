@@ -76,10 +76,19 @@ namespace MoveWindows.Services
                 return;
             }
 
-            var newPosition = GetTargetPosition(targetPositionForScreens, screenWhereCursorIs, popupPosition);
+            var size = IsApproximatelyTheSame(GlobalConfiguration.TargetDimensions, popupPosition)
+                ? popupPosition.Size
+                : GlobalConfiguration.TargetDimensions;
+
+            var newPosition = GetTargetPosition(targetPositionForScreens, screenWhereCursorIs, size);
             if (IsDifferent(newPosition, popupPosition))
             {
-                User32.MoveWindow(handle, newPosition.X, newPosition.Y, popupPosition.Width, popupPosition.Height, true);
+                User32.MoveWindow(handle,
+                    newPosition.X,
+                    newPosition.Y,
+                    size.Width,
+                    size.Height,
+                    true);
             }
         }
 
@@ -93,25 +102,20 @@ namespace MoveWindows.Services
             }
         }
 
-        private static bool IsDifferent(Point newPosition, Rectangle popupPosition)
+        private bool IsApproximatelyTheSame(Size newSize, Rectangle popupPosition)
         {
-            if (newPosition.X != popupPosition.X)
-            {
-                return true;
-            }
-
-            if (newPosition.Y != popupPosition.Y)
-            {
-                return true;
-            }
-
-            return false;
+            return newSize.Width == popupPosition.Width || newSize.Height == popupPosition.Height;
         }
 
-        private static Point GetTargetPosition(Dictionary<Screen, ScreenPositionInformation> targetPositionForScreens, Screen screenWhereCursorIs, Rectangle popupPosition)
+        private static bool IsDifferent(Point newPosition, Rectangle popupPosition)
+        {
+            return newPosition.X != popupPosition.X || newPosition.Y != popupPosition.Y;
+        }
+
+        private static Point GetTargetPosition(Dictionary<Screen, ScreenPositionInformation> targetPositionForScreens, Screen screenWhereCursorIs, Size targetSize)
         {
             var targetPosition = targetPositionForScreens[screenWhereCursorIs];
-            var newPosition = GeometryHelper.GetPosition(targetPosition, popupPosition.Width, popupPosition.Height, 8);
+            var newPosition = GeometryHelper.GetPosition(targetPosition, targetSize.Width, targetSize.Height, GlobalConfiguration.Margin);
             return newPosition;
         }
 

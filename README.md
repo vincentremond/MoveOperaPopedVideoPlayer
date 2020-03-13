@@ -9,10 +9,12 @@ dotnet publish --configuration Release --runtime win10-x64
 
 ## TODO
 
-- [ ] Read `className` and `windowTitle` from config
-- [ ] Get target position from screen position with a config file
+
+- [ ] Configuration
+  - [ ] Read `className` and `windowTitle` from config
+  - [ ] Get target position from screen position with a config file
+  - [ ] Generate a sample config file from current screen configuration
+  - [ ] Define size in configuration
 - [x] Hide window from taskbar
-- [ ] Generate a sample config file from current screen configuration
 - [ ] Handle multiple DPI per screen to avoid multiple move and resize
 - [ ] Replace timer with event throttler
-- [ ] Define size in configuration
