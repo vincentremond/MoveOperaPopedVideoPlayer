@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Threading;
@@ -8,7 +7,6 @@ using Microsoft.Extensions.Logging;
 using AutoMovePipWindow.Configuration;
 using AutoMovePipWindow.Contracts;
 using AutoMovePipWindow.Helpers;
-using AutoMovePipWindow.NativeCalls;
 using Rectangle = System.Drawing.Rectangle;
 
 namespace AutoMovePipWindow.Services
@@ -17,11 +15,19 @@ namespace AutoMovePipWindow.Services
     {
         private readonly ISingleInstanceChecker _singleInstanceChecker;
         private readonly ILogger<ServiceDaemon> _logger;
+        private readonly PipConfiguration _configuration;
+        private readonly ScreenConfigurationLocator _screenConfigurationLocator;
 
-        public ServiceDaemon(ISingleInstanceChecker singleInstanceChecker, ILogger<ServiceDaemon> logger)
+        public ServiceDaemon(ISingleInstanceChecker singleInstanceChecker,
+            ILogger<ServiceDaemon> logger,
+            PipConfiguration configuration,
+            ScreenConfigurationLocator screenConfigurationLocator
+        )
         {
             _singleInstanceChecker = singleInstanceChecker;
             _logger = logger;
+            _configuration = configuration;
+            _screenConfigurationLocator = screenConfigurationLocator;
         }
 
         public void Start()
@@ -34,105 +40,65 @@ namespace AutoMovePipWindow.Services
         {
             _logger.LogInformation("Main process starting");
 
-            var targetPositionForScreens = GetConfiguration();
             while (true)
             {
-                MoveWindow(targetPositionForScreens);
+                MoveWindow();
 
-                Thread.Sleep(1000);
+                Thread.Sleep(_configuration.Interval);
             }
 
             // ReSharper disable once FunctionNeverReturns
         }
 
-        private void MoveWindow(Dictionary<Screen, ScreenPositionInformation> targetPositionForScreens)
+        private void MoveWindow()
         {
             var cursorPosition = Cursor.Position;
 
-            var screenWhereCursorIs = Screen.AllScreens.FirstOrDefault(s => GeometryHelper.IsPointInRectangle(cursorPosition, s.Bounds));
-            if (screenWhereCursorIs == null)
+            var targets = _screenConfigurationLocator.GetTargets();
+
+            var target = targets.FirstOrDefault(t => t.Rectangle.IsPointInside(cursorPosition));
+            if (target == null)
             {
                 return;
             }
 
-            var className = GlobalConfiguration.WindowClassName;
-            var windowTitle = GlobalConfiguration.WindowTitle;
-            var handle = User32.FindWindowEx(IntPtr.Zero, IntPtr.Zero, className, windowTitle);
+            var browser = _configuration.Browsers[_configuration.TargetBrowser];
+            var handle = User32Helper.FindWindow(browser.WindowClassName, browser.WindowTitle);
             if (handle == IntPtr.Zero)
             {
                 _logger.LogWarning("Failed to find window handle");
                 return;
             }
 
-            if (GlobalConfiguration.HideWindow)
+            if (browser.HideWindow)
             {
-                HideWindow(handle);
+                User32Helper.HideWindow(handle);
             }
 
-            var popupPosition = GetPipWindowPosition(handle);
-            var userHasMouseOverPopup = GeometryHelper.IsPointInRectangle(cursorPosition, popupPosition);
+            var popupPosition = User32Helper.GetWindowPosition(handle);
+            var userHasMouseOverPopup = popupPosition.IsPointInside(cursorPosition);
             if (userHasMouseOverPopup)
             {
                 return;
             }
 
-            var size = IsApproximatelyTheSame(GlobalConfiguration.TargetDimensions, popupPosition)
+            var targetDimensions = new Size(_configuration.Size.Width, _configuration.Size.Height);
+
+            var size = GeometryHelper.IsApproximatelyTheSame(targetDimensions, popupPosition)
                 ? popupPosition.Size
-                : GlobalConfiguration.TargetDimensions;
+                : targetDimensions;
 
-            var newPosition = GetTargetPosition(targetPositionForScreens, screenWhereCursorIs, size);
-            if (IsDifferent(newPosition, popupPosition))
+            var newPosition = GetTargetPosition(size, target.Position, target.Screen, _configuration.Size.Margin);
+            if (GeometryHelper.IsDifferent(newPosition, popupPosition))
             {
-                User32.MoveWindow(handle,
-                    newPosition.X,
-                    newPosition.Y,
-                    size.Width,
-                    size.Height,
-                    true);
+                User32Helper.MoveWindow(handle, newPosition);
             }
         }
 
-        private static void HideWindow(IntPtr handle)
+        private static Rectangle GetTargetPosition(Size targetSize, ScreenPosition position, Screen targetScreen, int margin)
         {
-            var windowLong = User32.GetWindowLong(handle, User32.GwlExStyle);
-            var targetWindowLong = (windowLong | User32.WsExToolwindow) & ~User32.WsExAppwindow;
-            if (windowLong != targetWindowLong)
-            {
-                User32.SetWindowLong(handle, User32.GwlExStyle, targetWindowLong);
-            }
-        }
-
-        private bool IsApproximatelyTheSame(Size newSize, Rectangle popupPosition)
-        {
-            return newSize.Width == popupPosition.Width || newSize.Height == popupPosition.Height;
-        }
-
-        private static bool IsDifferent(Point newPosition, Rectangle popupPosition)
-        {
-            return newPosition.X != popupPosition.X || newPosition.Y != popupPosition.Y;
-        }
-
-        private static Point GetTargetPosition(Dictionary<Screen, ScreenPositionInformation> targetPositionForScreens, Screen screenWhereCursorIs, Size targetSize)
-        {
-            var targetPosition = targetPositionForScreens[screenWhereCursorIs];
-            var newPosition = GeometryHelper.GetPosition(targetPosition, targetSize.Width, targetSize.Height, GlobalConfiguration.Margin);
-            return newPosition;
-        }
-
-        private static Rectangle GetPipWindowPosition(IntPtr handle)
-        {
-            User32.GetWindowRect(handle, out var systemRectangle);
-            var popupPosition = systemRectangle.AsDrawingRectangle();
-            return popupPosition;
-        }
-
-        private static Dictionary<Screen, ScreenPositionInformation> GetConfiguration()
-        {
-            var screens = Screen.AllScreens;
-            var targetPositionForScreens = new Dictionary<Screen, ScreenPositionInformation>();
-            targetPositionForScreens[screens[0]] = new ScreenPositionInformation {Screen = screens[1], Position = ScreenPosition.BottomLeft};
-            targetPositionForScreens[screens[1]] = new ScreenPositionInformation {Screen = screens[0], Position = ScreenPosition.BottomRight};
-            return targetPositionForScreens;
+            var newPosition = GeometryHelper.GetPosition(position, targetScreen.WorkingArea, targetSize, margin);
+            return new Rectangle(newPosition, targetSize);
         }
     }
 }

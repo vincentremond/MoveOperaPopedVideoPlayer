@@ -3,8 +3,10 @@
 namespace AutoMovePipWindow.Configuration
 {
     [Flags]
+    [Serializable]
     internal enum ScreenPosition
     {
+        Undefined = 0,
         Top = 1,
         Right = 2,
         Bottom = 4,

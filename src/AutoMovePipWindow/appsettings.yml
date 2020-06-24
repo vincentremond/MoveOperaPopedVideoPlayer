@@ -1,0 +1,38 @@
+﻿Size:
+  Width: 450
+  Height: 300
+  Margin: 8
+TargetBrowser: Firefox
+Interval: 1000
+Browsers:
+  Firefox:
+    WindowClassName: MozillaDialogClass
+    WindowTitle: Picture-in-Picture
+    HideWindow: true
+  Opera:
+    WindowClassName: Chrome_WidgetWin_2
+    WindowTitle: ''
+    HideWindow: false
+Screens:
+  SingleScreen:
+    Conditions:
+      - { Primary: true }
+    Positions:
+      - { Cursor: { X: 0, Y: 0, Width: 0.3, Height: 0.3 }, Target: { Position: BottomRight } }
+      - { Cursor: { X: 0.7, Y: 0, Width: 0.3, Height: 0.3 }, Target: { Position: BottomLeft } }
+      - { Cursor: { X: 0, Y: 0.7, Width: 0.3, Height: 0.3 }, Target: { Position: TopRight } }
+      - { Cursor: { X: 0.7, Y: 0.7, Width: 0.3, Height: 0.3 }, Target: { Position: TopLeft } }
+  Dual--SecondaryLeft:
+    Conditions:
+      - { Primary: true }
+      - { Primary: false, Expression: "X < 0" }
+    Positions:
+      - { Cursor: { Screen: 0 }, Target: { Screen: 1, Position: BottomRight } }
+      - { Cursor: { Screen: 1 }, Target: { Screen: 0, Position: BottomLeft } }
+  Dual--SecondaryRight:
+    Conditions:
+      - { Primary: true }
+      - { Primary: false }
+    Positions:
+      - { Cursor: { Screen: 0 }, Target: { Screen: 1, Position: BottomLeft } }
+      - { Cursor: { Screen: 1 }, Target: { Screen: 0, Position: BottomRight } }
