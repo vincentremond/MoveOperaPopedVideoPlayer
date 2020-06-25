@@ -18,9 +18,9 @@ namespace AutoMovePipWindow.Services
             _configuration = configuration;
         }
 
-        internal List<PositionTargetAssociation> GetTargets()
+        internal List<PositionTargetAssociation> GetTargets(Screen[] allScreens)
         {
-            var assoc = AssociateScreenAndPositions();
+            var assoc = AssociateScreenAndPositions(allScreens);
             if (assoc == null)
             {
                 return null;
@@ -46,16 +46,15 @@ namespace AutoMovePipWindow.Services
 
         private Rectangle GetRectangle(Rectangle screenBounds, CursorConfiguration positionCursor)
         {
-            int x = (int) (screenBounds.X + (positionCursor.X * screenBounds.Width));
-            int y = (int) (screenBounds.Y + (positionCursor.Y * screenBounds.Height));
-            int width = (int) (positionCursor.Width * screenBounds.Width);
-            int height = (int) (positionCursor.Width * screenBounds.Width);
+            var x = (int) (screenBounds.X + (positionCursor.X * screenBounds.Width));
+            var y = (int) (screenBounds.Y + (positionCursor.Y * screenBounds.Height));
+            var width = (int) (positionCursor.Width * screenBounds.Width);
+            var height = (int) (positionCursor.Height * screenBounds.Height);
             return new Rectangle(x, y, width, height);
         }
 
-        private ScreenPositions AssociateScreenAndPositions()
+        private ScreenPositions AssociateScreenAndPositions(Screen[] allScreens)
         {
-            var allScreens = Screen.AllScreens;
             foreach (var (_, screenConfiguration) in _configuration.Screens)
             {
                 if (screenConfiguration.Conditions.Length != allScreens.Length)

@@ -53,8 +53,9 @@ namespace AutoMovePipWindow.Services
         private void MoveWindow()
         {
             var cursorPosition = Cursor.Position;
-
-            var targets = _screenConfigurationLocator.GetTargets();
+            var allScreens = Screen.AllScreens;
+            
+            var targets = _screenConfigurationLocator.GetTargets(allScreens);
 
             var target = targets.FirstOrDefault(t => t.Rectangle.IsPointInside(cursorPosition));
             if (target == null)
@@ -76,10 +77,14 @@ namespace AutoMovePipWindow.Services
             }
 
             var popupPosition = User32Helper.GetWindowPosition(handle);
-            var userHasMouseOverPopup = popupPosition.IsPointInside(cursorPosition);
-            if (userHasMouseOverPopup)
+
+            if (_configuration.AllowOverlap)
             {
-                return;
+                var userHasMouseOverPopup = popupPosition.IsPointInside(cursorPosition);
+                if (userHasMouseOverPopup)
+                {
+                    return;
+                }
             }
 
             var targetDimensions = new Size(_configuration.Size.Width, _configuration.Size.Height);

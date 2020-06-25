@@ -4,6 +4,7 @@
   Margin: 8
 TargetBrowser: Firefox
 Interval: 1000
+AllowOverlap: false
 Browsers:
   Firefox:
     WindowClassName: MozillaDialogClass
@@ -18,10 +19,8 @@ Screens:
     Conditions:
       - { Primary: true }
     Positions:
-      - { Cursor: { X: 0, Y: 0, Width: 0.3, Height: 0.3 }, Target: { Position: BottomRight } }
-      - { Cursor: { X: 0.7, Y: 0, Width: 0.3, Height: 0.3 }, Target: { Position: BottomLeft } }
-      - { Cursor: { X: 0, Y: 0.7, Width: 0.3, Height: 0.3 }, Target: { Position: TopRight } }
-      - { Cursor: { X: 0.7, Y: 0.7, Width: 0.3, Height: 0.3 }, Target: { Position: TopLeft } }
+      - { Cursor: { X: 0, Y: 0.5, Width: 0.4, Height: 0.5 }, Target: { Position: BottomRight } }
+      - { Cursor: { X: 0.6, Y: 0.5, Width: 0.4, Height: 0.5 }, Target: { Position: BottomLeft } }
   Dual--SecondaryLeft:
     Conditions:
       - { Primary: true }
