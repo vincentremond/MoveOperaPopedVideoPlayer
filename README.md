@@ -13,3 +13,8 @@ This badly writen app will move the picture-in-picture video player from Firefox
 - [ ] Handle multiple DPI per screen to avoid multiple move and resize
 - [ ] Replace timer with event throttler
 - [ ] Better handling of square videos (too big)
+
+## Note
+
+- Usefull tools
+  - [WinLister](https://www.nirsoft.net/utils/winlister.html) : list all windows class names and titles.

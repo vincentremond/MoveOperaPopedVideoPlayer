@@ -1,8 +1,8 @@
 ﻿Size:
-  Width: 450
-  Height: 300
+  Width: 480
+  Height: 270
   Margin: 8
-TargetBrowser: Firefox
+TargetBrowser: Chrome
 Interval: 1000
 AllowOverlap: false
 Browsers:
@@ -14,13 +14,21 @@ Browsers:
     WindowClassName: Chrome_WidgetWin_2
     WindowTitle: ''
     HideWindow: false
+  Chrome:
+    WindowClassName: Chrome_WidgetWin_1
+    WindowTitle: Picture in picture
+    HideWindow: true
 Screens:
   SingleScreen:
     Conditions:
       - { Primary: true }
     Positions:
-      - { Cursor: { X: 0, Y: 0.5, Width: 0.4, Height: 0.5 }, Target: { Position: BottomRight } }
-      - { Cursor: { X: 0.6, Y: 0.5, Width: 0.4, Height: 0.5 }, Target: { Position: BottomLeft } }
+      # - { Cursor: { X: 0, Y: 0.5, Width: 0.4, Height: 0.5 }, Target: { Position: BottomRight } }
+      # - { Cursor: { X: 0.6, Y: 0.5, Width: 0.4, Height: 0.5 }, Target: { Position: BottomLeft } }
+      - { Cursor: { X: 0, Y: 0.6, Width: 0.4, Height: 0.4 }, Target: { Position: TopRight } }
+      - { Cursor: { X: 0.6, Y: 0.6, Width: 0.4, Height: 0.4 }, Target: { Position: TopLeft } }
+      - { Cursor: { X: 0, Y: 0, Width: 0.4, Height: 0.6 }, Target: { Position: BottomRight } }
+      - { Cursor: { X: 0.6, Y: 0, Width: 0.4, Height: 0.6 }, Target: { Position: BottomLeft } }
   Dual--SecondaryLeft:
     Conditions:
       - { Primary: true }
