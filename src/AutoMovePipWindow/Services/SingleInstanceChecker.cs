@@ -16,7 +16,10 @@ namespace AutoMovePipWindow.Services
 
             var allOtherProcesses = Process.GetProcessesByName(currentProcess.ProcessName)
                 .Where(p => p.Id != currentProcess.Id);
-            foreach (var p in allOtherProcesses) p.Kill();
+            foreach (var p in allOtherProcesses)
+            {
+                p.Kill();
+            }
         }
     }
 }

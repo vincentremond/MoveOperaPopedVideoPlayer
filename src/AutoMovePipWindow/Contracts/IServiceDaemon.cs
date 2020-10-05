@@ -1,7 +1,10 @@
-﻿namespace AutoMovePipWindow.Contracts
+﻿using System.Threading;
+using System.Threading.Tasks;
+
+namespace AutoMovePipWindow.Contracts
 {
     internal interface IServiceDaemon
     {
-        void Start();
+        Task StartAsync(CancellationToken cancellationToken);
     }
 }

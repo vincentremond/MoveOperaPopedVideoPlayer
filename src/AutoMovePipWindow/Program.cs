@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using AutoMovePipWindow.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,15 +14,27 @@ namespace AutoMovePipWindow
     internal static class Program
     {
         [STAThread]
-        public static void Main()
+        public static async Task Main()
         {
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
+            var cancellationTokenSource = new CancellationTokenSource();
+            var cancellationToken = cancellationTokenSource.Token;
+
+            var t = Worker(cancellationToken);
+
+            Application.Run(new TrayIconContext(cancellationTokenSource));
+
+            await t;
+        }
+
+        private static async Task Worker(CancellationToken cancellationToken)
+        {
             var serviceProvider = InitApp();
             var daemon = serviceProvider.GetRequiredService<IServiceDaemon>();
-            daemon.Start();
+            await daemon.StartAsync(cancellationToken);
         }
 
         private static IServiceProvider InitApp()
@@ -39,7 +53,10 @@ namespace AutoMovePipWindow
         private static PipConfiguration GetConfiguration()
         {
             IConfiguration config = new ConfigurationBuilder()
-                .AddYamlFile("appsettings.yml", optional: false, reloadOnChange: false)
+                .AddYamlFile(
+                    path: "appsettings.yml",
+                    optional: false,
+                    reloadOnChange: false)
                 .Build();
 
             return config.Get<PipConfiguration>();

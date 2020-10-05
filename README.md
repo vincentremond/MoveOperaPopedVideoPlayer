@@ -12,7 +12,8 @@ This badly writen app will move the picture-in-picture video player from Firefox
 - [x] Hide window from taskbar
 - [ ] Handle multiple DPI per screen to avoid multiple move and resize
 - [ ] Replace timer with event throttler
-- [ ] Better handling of square videos (too big)
+- [x] Better handling of square videos (too big)
+- [x] Tray icon
 
 ## Note
 

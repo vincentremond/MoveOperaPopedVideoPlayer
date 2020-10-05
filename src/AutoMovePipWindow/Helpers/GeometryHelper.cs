@@ -10,11 +10,11 @@ namespace AutoMovePipWindow.Helpers
         {
             var y
                 = position.HasFlag(ScreenPosition.Top) ? workingArea.Y + margin
-                : position.HasFlag(ScreenPosition.Bottom) ? workingArea.Y + workingArea.Height - margin - targetSize.Height
+                : position.HasFlag(ScreenPosition.Bottom) ? (workingArea.Y + workingArea.Height) - margin - targetSize.Height
                 : throw new InvalidOperationException("Position has no verticality");
             var x
                 = position.HasFlag(ScreenPosition.Left) ? workingArea.X + margin
-                : position.HasFlag(ScreenPosition.Right) ? workingArea.X + workingArea.Width - margin - targetSize.Width
+                : position.HasFlag(ScreenPosition.Right) ? (workingArea.X + workingArea.Width) - margin - targetSize.Width
                 : throw new InvalidOperationException("Position has no horizontality");
             return new Point(x, y);
         }
@@ -27,7 +27,10 @@ namespace AutoMovePipWindow.Helpers
 
         private static bool IsBetween(int value, int min, int max)
         {
-            if (!(max > min)) throw new InvalidOperationException($"Min ({min}) should be smaller than Man ({max})");
+            if (!(max > min))
+            {
+                throw new InvalidOperationException($"Min ({min}) should be smaller than Man ({max})");
+            }
 
             return min <= value && value <= max;
         }

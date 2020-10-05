@@ -2,11 +2,12 @@
 using System.Drawing;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
-using Microsoft.Extensions.Logging;
 using AutoMovePipWindow.Configuration;
 using AutoMovePipWindow.Contracts;
 using AutoMovePipWindow.Helpers;
+using Microsoft.Extensions.Logging;
 using Rectangle = System.Drawing.Rectangle;
 
 namespace AutoMovePipWindow.Services
@@ -30,31 +31,28 @@ namespace AutoMovePipWindow.Services
             _screenConfigurationLocator = screenConfigurationLocator;
         }
 
-        public void Start()
+        public async Task StartAsync(CancellationToken cancellationToken)
         {
             _singleInstanceChecker.KillOtherInstances();
-            MainProcess();
+            await MainProcessAsync(cancellationToken);
         }
 
-        private void MainProcess()
+        private async Task MainProcessAsync(CancellationToken cancellationToken)
         {
             _logger.LogInformation("Main process starting");
 
-            while (true)
+            while (!cancellationToken.IsCancellationRequested)
             {
                 MoveWindow();
-
-                Thread.Sleep(_configuration.Interval);
+                await Task.Delay(_configuration.Interval);
             }
-
-            // ReSharper disable once FunctionNeverReturns
         }
 
         private void MoveWindow()
         {
             var cursorPosition = Cursor.Position;
             var allScreens = Screen.AllScreens;
-            
+
             var targets = _screenConfigurationLocator.GetTargets(allScreens);
 
             var target = targets.FirstOrDefault(t => t.Rectangle.IsPointInside(cursorPosition));
