@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -39,8 +40,9 @@ namespace AutoMovePipWindow
 
         private static IServiceProvider InitApp()
         {
-            var config = GetConfiguration();
+            var config = GetConfiguration<PipConfiguration>();
             var serviceProvider = new ServiceCollection();
+            serviceProvider.AddSingleton(config);
             serviceProvider.AddTransient<ISingleInstanceChecker, SingleInstanceChecker>();
             serviceProvider.AddTransient<ScreenConfigurationLocator, ScreenConfigurationLocator>();
             serviceProvider.AddTransient<IServiceDaemon, ServiceDaemon>();
@@ -50,16 +52,11 @@ namespace AutoMovePipWindow
             return serviceProvider.BuildServiceProvider();
         }
 
-        private static PipConfiguration GetConfiguration()
+        private static T GetConfiguration<T>()
         {
-            IConfiguration config = new ConfigurationBuilder()
-                .AddYamlFile(
-                    path: "appsettings.yml",
-                    optional: false,
-                    reloadOnChange: false)
-                .Build();
-
-            return config.Get<PipConfiguration>();
+            var content = File.ReadAllText("appsettings.yml");
+            var deserializer = new YamlDotNet.Serialization.Deserializer();
+            return deserializer.Deserialize<T>(content);
         }
     }
 }

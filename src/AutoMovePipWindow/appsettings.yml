@@ -1,9 +1,4 @@
-﻿Size:
-#  Width: 480
-#  Height: 270
-  Width: 640
-  Height: 360
-  Margin: 8
+﻿Size: 50*16/9:8
 TargetBrowser: Chrome
 Interval: 00:00:01.000
 AllowOverlap: false
