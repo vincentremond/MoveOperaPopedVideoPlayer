@@ -1,0 +1,13 @@
+source https://api.nuget.org/v3/index.json
+
+storage: none
+framework: net5.0-windows
+nuget Microsoft.Extensions.Configuration
+nuget Microsoft.Extensions.DependencyInjection
+nuget Microsoft.Extensions.Logging.Console
+nuget Microsoft.NET.Test.Sdk
+nuget NUnit
+nuget NUnit3TestAdapter
+nuget System.CommandLine.DragonFruit
+nuget YamlDotNet
+nuget Z.Expressions.Eval

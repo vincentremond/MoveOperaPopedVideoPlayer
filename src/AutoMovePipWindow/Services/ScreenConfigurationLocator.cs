@@ -38,7 +38,8 @@ namespace AutoMovePipWindow.Services
                 var rectangle = GetRectangle(assoc.Screens[cursorScreenIndex].Bounds, position.Cursor);
                 var targetScreen = assoc.Screens[position.Target.Screen];
                 var targetPosition = position.Target.Position;
-                results.Add(new PositionTargetAssociation(rectangle, targetScreen, targetPosition));
+                var size = position.Target.Size ?? _configuration.Size;
+                results.Add(new PositionTargetAssociation(rectangle, targetScreen, targetPosition, size));
             }
 
             return results;

@@ -1,0 +1,7 @@
+Microsoft.Extensions.Configuration
+Microsoft.Extensions.DependencyInjection
+Microsoft.Extensions.Logging.Console
+Microsoft.Extensions.Logging.Configuration
+System.CommandLine.DragonFruit
+YamlDotNet
+Z.Expressions.Eval

@@ -85,13 +85,13 @@ namespace AutoMovePipWindow.Services
                 }
             }
 
-            var targetDimensions = new Size(_configuration.Size.Width, _configuration.Size.Height);
+            var targetDimensions = new Size(target.Size.Width, target.Size.Height);
 
             var size = GeometryHelper.IsApproximatelyTheSame(targetDimensions, popupPosition)
                 ? popupPosition.Size
                 : targetDimensions;
 
-            var newPosition = GetTargetPosition(size, target.Position, target.Screen, _configuration.Size.Margin);
+            var newPosition = GetTargetPosition(size, target.Position, target.Screen, target.Size.Margin);
             if (GeometryHelper.IsDifferent(newPosition, popupPosition))
             {
                 User32Helper.MoveWindow(handle, newPosition);

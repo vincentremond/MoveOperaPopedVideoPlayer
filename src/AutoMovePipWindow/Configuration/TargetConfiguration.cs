@@ -7,5 +7,6 @@ namespace AutoMovePipWindow.Configuration
     {
         public int Screen { get; set; } = 0;
         public ScreenPosition Position { get; set; } = ScreenPosition.Undefined;
+        public SizeConfiguration Size { get; set; }
     }
 }
